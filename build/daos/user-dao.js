@@ -41,6 +41,13 @@ class UserDao {
             return user_model_1.default.findById(uid);
         });
         /**
+         * Uses UserModel to retrieve single user document from users collection
+         * by their email address
+         * @param {string} email User's username
+         * @returns Promise To be notified when user is retrieved from the database
+         */
+        this.findUserByEmail = (email) => __awaiter(this, void 0, void 0, function* () { return user_model_1.default.findOne({ email }); });
+        /**
          * Inserts user instance into the database
          * @param {User} user Instance to be inserted into the database
          * @returns Promise To be notified when user is inserted into the database
