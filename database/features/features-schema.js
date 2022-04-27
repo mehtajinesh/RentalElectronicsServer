@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 const featureSchema = mongoose.Schema({
-    featureName: String,
-    featureValue: String,
+    FeatureName: String,
+    FeatureValue: String,
 }, {collection: 'features'});
 export default featureSchema;

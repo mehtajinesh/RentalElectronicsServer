@@ -1,9 +1,9 @@
 import mongoose from 'mongoose';
 
 const orderSchema = mongoose.Schema({
-    orderID: String,
+    orderID: mongoose.Schema.Types.ObjectId,
     orderDate: String,
-    productID: String,
+    productID: mongoose.Schema.Types.ObjectId,
     itemCount: Number
 }, {collection: 'orders'});
 export default orderSchema;

@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 const userInformationSchema = mongoose.Schema({
-    userID: String,
+    userID: mongoose.Schema.Types.ObjectId,
     firstName: String,
     lastName: String,
     bio: String,

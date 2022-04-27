@@ -1,16 +1,27 @@
 import express from 'express';
-import applicationController   from "./controllers/application-controller.js";
+import dotenv from 'dotenv';
+import mongoose from "mongoose";
+import session from 'express-session';
+import cors from 'cors';
+import bodyParser from "body-parser";
+import homePageController from "./controllers/home-page-controller.js";
 const app = express();
-let session = require('express-session')
 app.use(session({
     resave: false, saveUninitialized: true,
     secret: 'secret key'
 }));
-let bodyParser = require('body-parser');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
     extended: true
 }));
+app.use(cors());
 
-applicationController(app);
-app.listen(4000);
+
+dotenv.config();
+const CONNECTION_STRING = process.env.DB_CONNECTION_STRING
+mongoose.connect(CONNECTION_STRING);
+homePageController(app);
+app.get('/', (request, response) => {
+    response.send("Welcome to Rentronics");
+});
+app.listen(process.env.PORT || 4000)
