@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const userTypeArray = ["Buyer", "Seller", "Buyer_Seller","Admin"];
+const userTypeArray = ["buyer", "seller", "buyer_seller","admin"];
 
 const userSchema = mongoose.Schema({
     email: {type: String, required: true, unique: true},
@@ -25,10 +25,22 @@ const userSchema = mongoose.Schema({
       enum: userTypeArray,
       required: true
     },
-    reviews: [],
-    listed_items: [],
-    cart: [],
-    wishlist: []
+    reviews: {
+      type: Array,
+      defualt: [],
+    },
+    listed_items: {
+      type: Array,
+      defualt: [],
+    },
+    cart: {
+      type: Array,
+      defualt: [],
+    },
+    wishlist: {
+      type: Array,
+      defualt: [],
+    }
 }, {collection: 'users'});
 
 

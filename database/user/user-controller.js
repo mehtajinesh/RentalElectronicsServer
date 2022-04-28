@@ -1,4 +1,4 @@
-const userDao = require('../dao/user-dao');
+const userDao = require('./user-dao');
 
 const findAllUsers = async (req, res) => {
     const users = await userDao.findAllUsers();
@@ -66,6 +66,8 @@ const updateUser = async (req, res) => {
     const uid = req.params['uid'];
     const user = req.body;
     const status = await userDao.updateUser(uid, user);
+    req.session['profile'] = user;
+
     res.json(status);
 }
 
