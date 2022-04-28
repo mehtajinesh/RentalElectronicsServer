@@ -1,6 +1,6 @@
-import featureModel from './features-model.js';
+import featuresModel from './features-model.js';
 
-export const daoGetFeatureForID = (featureID) => featureModel.findById(featureID);
-export const daoAddFeature = (feature) => featureModel.create(feature);
-export const daoDeleteFeature = (featureID) => featureModel.deleteOne({_id: featureID});
-export const daoUpdateFeature = (featureID, updated_feature) => featureModel.updateOne({_id: featureID}, {$set: updated_feature})
+export const daoGetFeatureForID = (featureID) => featuresModel.findById(featureID);
+export const daoAddFeature = (feature) => featuresModel.create(feature);
+export const daoDeleteFeature = (featureID) => featuresModel.deleteOne({_id: featureID});
+export const daoUpdateFeature = (featureID, updated_feature) => featuresModel.updateOne({_id: featureID}, {$set: updated_feature})

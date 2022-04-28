@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import roleSchema from './roles-schema.js'
-const roleModel = mongoose
-    .model('roleModel', roleSchema);
-export default roleModel;
+
+const rolesModel = mongoose
+    .model('rolesModel', roleSchema);
+export default rolesModel;

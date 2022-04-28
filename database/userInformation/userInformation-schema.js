@@ -1,7 +1,8 @@
 import mongoose from 'mongoose';
+import usersModel from "../users/users-model.js";
 
 const userInformationSchema = mongoose.Schema({
-    userID: mongoose.Schema.Types.ObjectId,
+    userID: {type: mongoose.Schema.Types.ObjectId, ref: 'usersModel'},
     firstName: String,
     lastName: String,
     bio: String,

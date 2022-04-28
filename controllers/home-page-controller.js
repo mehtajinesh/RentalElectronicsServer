@@ -1,14 +1,9 @@
 import {daoGetAllCategories} from "../database/category/category-dao.js";
-import {
-    daoGetAllProductsIDsForCategory,
-    daoGetAllTrendingItems,
-    daoGetProductFromID
-} from "../database/products/products-dao.js";
+import {daoGetAllProductsIDsForCategory, daoGetAllTrendingItems} from "../database/products/products-dao.js";
 import {daoGetAllFeaturesForProduct} from "../database/productFeatures/product-feature-dao.js";
 import {daoGetFeatureForID} from "../database/features/features-dao.js";
-import {daoGetAllUserInformationForUser} from "../database/userInformation/userInformation-dao.js";
 import {daoGetPopularReviews} from "../database/reviews/review-dao.js";
-import {daoGetAllUserProductForReview} from "../database/productReview/product-review-dao.js";
+import {daoGetAllUserProductForReviews} from "../database/productReview/product-review-dao.js";
 import {daoGetAllRecentlyViewedForUser} from "../database/recentlyViewed/recently-viewed-dao.js";
 
 const getHomePageData = async (req, res) => {
@@ -43,48 +38,23 @@ const getHomePageData = async (req, res) => {
     homePageData['categories'] =categoriesData
     // fetch trending items
     // go to the products tables and fetch the top 10 products
-    const trendingItems = await daoGetAllTrendingItems();
-    const trendingSellers = []
-    for(const item of trendingItems){
-        const information = {}
-        information[item['_id']] = await daoGetAllUserInformationForUser(item["sellerID"])
-        trendingSellers.push(information)
-    }
-    homePageData['treadingItems'] = trendingItems
-    homePageData['treadingSellersForItems'] = trendingSellers
+    homePageData['treadingItems'] = await daoGetAllTrendingItems()
     // fetch popular reviews
     // go to the reviews table and fetch top 10 reviews with max likes
-    const popularReviews = await daoGetPopularReviews();
-    const userWithPopularReviews = []
-    const productWithPopularReviews = []
-    for(const review of popularReviews){
-        const userProduct = await daoGetAllUserProductForReview(review["_id"])
-        const userInformation = await daoGetAllUserInformationForUser(userProduct['userID'])
-        const productInformation = await daoGetProductFromID(userProduct['productID'])
-        userWithPopularReviews.push(userInformation)
-        productWithPopularReviews.push(productInformation)
-    }
-    homePageData['popularReviews'] = popularReviews
-    homePageData['usersWithPopularReviews'] = userWithPopularReviews
-    homePageData['productsWithPopularReviews'] = productWithPopularReviews
+    const popularReviewIDs = await daoGetPopularReviews();
+    homePageData['popularReviews'] = await daoGetAllUserProductForReviews(popularReviewIDs)
     // if logged in, fetch recently viewed items
     const isLoggedIn = req.params['loggedIn']
     if (isLoggedIn)
     {
-        const recentItems = []
         // fetch recently viewed items
         const userID = req.params['userID']
         // get all recently viewed product ids for this user
-        const productIDs = await daoGetAllRecentlyViewedForUser(userID)
-        for(const productID of productIDs){
-            const productInformation = await daoGetProductFromID(productID['productID'])
-            recentItems.push(productInformation)
-        }
-        homePageData['recentItems'] = recentItems
+        homePageData['recentItems'] = await daoGetAllRecentlyViewedForUser(userID)
     }
     res.json(homePageData);
 }
 
 export default (app) => {
-    app.get('/api/home', getHomePageData);
+    app.get('/api/home', getHomePageData); //userID and loggedIn expected in requested
 }

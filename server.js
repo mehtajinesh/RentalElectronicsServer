@@ -5,6 +5,7 @@ import session from 'express-session';
 import cors from 'cors';
 import bodyParser from "body-parser";
 import homePageController from "./controllers/home-page-controller.js";
+import cartController from "./controllers/cart-controller.js";
 const app = express();
 app.use(session({
     resave: false, saveUninitialized: true,
@@ -21,6 +22,7 @@ dotenv.config();
 const CONNECTION_STRING = process.env.DB_CONNECTION_STRING
 mongoose.connect(CONNECTION_STRING);
 homePageController(app);
+cartController(app);
 app.get('/', (request, response) => {
     response.send("Welcome to Rentronics");
 });
