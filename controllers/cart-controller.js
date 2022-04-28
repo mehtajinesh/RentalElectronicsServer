@@ -1,16 +1,20 @@
-import {daoFindCartForUser, daoUpdateCart} from "../database/cart/cart-dao.js";
+import {
+    daoDeleteItemFromCartForUser,
+    daoFindCartForUser,
+    daoUpdateProductCountCartForUser
+} from "../database/cart/cart-dao.js";
 import {daoUpdateProductAvailableItemsForProduct} from "../database/products/products-dao.js";
 import {daoAddOrder} from "../database/orders/orders-dao.js";
 import {daoAddUserOrder} from "../database/userOrders/user-orders-dao.js";
 
 const getCartData = async (req, res) => {
     let cartData = {}
-    const isLoggedIn = req.params['loggedIn']
+    const isLoggedIn = req.query['loggedIn']
     // check if user loggedin
     if(isLoggedIn)
     {
         // get user id from body
-        const userID = req.params['userID']
+        const userID = req.query['userID']
         // get user cart and send to front end
         cartData = await daoFindCartForUser(userID)
         res.json(cartData);
@@ -19,12 +23,30 @@ const getCartData = async (req, res) => {
     res.send(401);
 }
 
-const updateCart = async (req, res) => {
-    const loggedIn = req.params['loggedIn']
+const removeCartItem = async (req, res) => {
+    const loggedIn = req.query['loggedIn']
     if (loggedIn){
-        const userID = req.params['userID']
-        const newCart = req.body;
-        await daoUpdateCart(userID,newCart);
+        const userID = req.query['userID']
+        const productID = req.query['productID']
+        await daoDeleteItemFromCartForUser(userID,productID);
+        res.send(200);
+        return
+    }
+    res.send(401)
+}
+
+const updateItemCountCart = async (req, res) => {
+    const loggedIn = req.query['loggedIn']
+    if (loggedIn){
+        const userID = req.query['userID']
+        const productID = req.query['productID']
+        const newCount = req.query['newCount']
+        if (newCount === "0" ){
+            await daoDeleteItemFromCartForUser(userID,productID);
+            res.send(200);
+            return
+        }
+        await daoUpdateProductCountCartForUser(userID,productID,parseInt(newCount));
         res.send(200);
         return
     }
@@ -32,9 +54,9 @@ const updateCart = async (req, res) => {
 }
 
 const placeOrder = async (req, res) => {
-    const isLoggedIn = req.params['loggedIn']
+    const isLoggedIn = req.query['loggedIn']
     if (isLoggedIn){
-        const userID = req.params['userID']
+        const userID = req.query['userID']
         // get user cart from database
         const currentCart = await daoFindCartForUser(userID)
         // check if all the items are available in stock
@@ -82,82 +104,9 @@ const placeOrder = async (req, res) => {
     res.send(401);
 }
 
-// const placeOrder = async (req, res) => {
-//     const homePageData = {}
-//     // fetch available categories
-//     const availableCategories = await daoGetAllCategories();
-//     //fetch respective filters for these categories
-//     //fetch all products for each category
-//     //fetch all features for each product and add them as part of each category in which the product belongs
-//     const categoriesData = []
-//     for (const category of availableCategories) {
-//         const features = {}
-//         const allProducts = await daoGetAllProductsIDsForCategory(category._id)
-//         for(const product of allProducts){
-//             const allFeatures = await daoGetAllFeaturesForProduct(product["_id"])
-//             for(const feature of allFeatures){
-//                 const featureData = await daoGetFeatureForID(feature["featureID"])
-//                 const newFeature = {_id:featureData["_id"],featureValue:featureData["FeatureValue"]}
-//                 if(featureData['featureName'] in Object.keys(features))
-//                 {
-//                     features[featureData['FeatureName']] = [ ... features[featureData['FeatureName']],newFeature]
-//                 }
-//                 else {
-//                     features[featureData['FeatureName']] = [newFeature]
-//                 }
-//             }
-//         }
-//         const categoryData = {}
-//         categoryData[category['categoryName']] = features
-//         categoriesData.push(categoryData)
-//     }
-//     homePageData['categories'] =categoriesData
-//     // fetch trending items
-//     // go to the products tables and fetch the top 10 products
-//     const trendingItems = await daoGetAllTrendingItems();
-//     const trendingSellers = []
-//     for(const item of trendingItems){
-//         const information = {}
-//         information[item['_id']] = await daoGetAllUserInformationForUser(item["sellerID"])
-//         trendingSellers.push(information)
-//     }
-//     homePageData['treadingItems'] = trendingItems
-//     homePageData['treadingSellersForItems'] = trendingSellers
-//     // fetch popular reviews
-//     // go to the reviews table and fetch top 10 reviews with max likes
-//     const popularReviews = await daoGetPopularReviews();
-//     const userWithPopularReviews = []
-//     const productWithPopularReviews = []
-//     for(const review of popularReviews){
-//         const userProduct = await daoGetAllUserProductForReview(review["_id"])
-//         const userInformation = await daoGetAllUserInformationForUser(userProduct['userID'])
-//         const productInformation = await daoGetProductFromID(userProduct['productID'])
-//         userWithPopularReviews.push(userInformation)
-//         productWithPopularReviews.push(productInformation)
-//     }
-//     homePageData['popularReviews'] = popularReviews
-//     homePageData['usersWithPopularReviews'] = userWithPopularReviews
-//     homePageData['productsWithPopularReviews'] = productWithPopularReviews
-//     // if logged in, fetch recently viewed items
-//     const isLoggedIn = req.params['loggedIn']
-//     if (isLoggedIn)
-//     {
-//         const recentItems = []
-//         // fetch recently viewed items
-//         const userID = req.params['userID']
-//         // get all recently viewed product ids for this user
-//         const productIDs = await daoGetAllRecentlyViewedForUser(userID)
-//         for(const productID of productIDs){
-//             const productInformation = await daoGetProductFromID(productID['productID'])
-//             recentItems.push(productInformation)
-//         }
-//         homePageData['recentItems'] = recentItems
-//     }
-//     res.json(homePageData);
-// }
-
 export default (app) => {
     app.get('/api/cart', getCartData); //loggedIn and userID needed
-    app.post('/api/updateCart', updateCart); // loggedIn and userID - updated Cart in body
-    app.post('/api/placeOrder', placeOrder);
+    app.post('/api/updateItemCountCart', updateItemCountCart); // loggedIn and userID, productID, updatedCount
+    app.post('/api/removeItemCart', removeCartItem); // loggedIn and userID, productID
+    app.post('/api/placeOrder', placeOrder); // loggedIn and userID needed
 }
