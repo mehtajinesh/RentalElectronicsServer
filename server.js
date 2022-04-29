@@ -7,6 +7,7 @@ import bodyParser from "body-parser";
 import homePageController from "./controllers/home-page-controller.js";
 import cartController from "./controllers/cart-controller.js";
 import searchController from "./controllers/search-controller.js";
+import productController from "./controllers/product-controller.js";
 const app = express();
 app.use(session({
     resave: false, saveUninitialized: true,
@@ -25,6 +26,7 @@ mongoose.connect(CONNECTION_STRING);
 homePageController(app);
 cartController(app);
 searchController(app);
+productController(app);
 app.get('/', (request, response) => {
     response.send("Welcome to Rentronics");
 });
