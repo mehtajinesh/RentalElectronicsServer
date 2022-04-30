@@ -8,6 +8,7 @@ const profileController = (app) => {
   app.get('/api/users/:uid/listings', getListingByUser);
   app.get('/api/users/:uid/wishlist', getWishlistByUser);
   app.get('/api/users/:uid/reviews', getReviewsByUser);
+  app.post('/api/users/:uid/products/:pid/reviews', createReviewByUser);
 }
 
 const getReviewsByUser = async (req, res) => {
