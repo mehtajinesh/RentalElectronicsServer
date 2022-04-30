@@ -1,26 +1,37 @@
-const signup  = (req, res) => {
-    const newUser = req.body;
-    const credentials = req.body;
+import * as userDao from "../database/users/user-dao.js";
 
-    users.push(credentials);
-    req.session['profile'] = credentials;
-    res.sendStatus(200);
+const register = async (req, res) => {
+    const user = req.body;
+    const existingUser = await userDao.findUserByCredentials(user.email, user.password);
+
+    if (existingUser) {
+        res.sendStatus(403);
+        return;
+    } else {
+        const newUser = await userDao.createUser(user);
+        // req.session['profile'] = newUser;
+        res.json(newUser);
+    }
 }
 
 const profile = (req, res) => {
-    res.json(req.session['profile']);
+    const profile = req.session['profile'];
+
+    if (profile) {
+        res.json(profile);
+    } else {
+        res.sendStatus(503);
+    }
 }
 
-const login = (req, res) => {
+const login = async (req, res) => {
     const credentials = req.body;
-    const profile = users.find(user => 
-        user.username === credentials.username
-        && user.password === credentials.password
-        );
+    const profile = await userDao.findUserByCredentials(credentials.email, credentials.password);
     
     if (profile) {
-        req.session['profie'] = profile;
-        res.sendStatus(200);
+        req.session['profile'] = profile;
+        res.json(profile);
+        req.session.save();
         return;
     }
 
@@ -29,20 +40,14 @@ const login = (req, res) => {
 
 const logout = (req, res) => {
     req.session.destroy();
+    res.sendStatus(200);
 }
 
-module.exports = (app) => {
-    app.get('/api/users', findAllUsers);
-    app.get('/api/users/:uid', findUserById);
-    app.get('/api/users/email/:email', findUserByEmail);
-
-    app.post('/api/users', createUser);
-
-    app.delete('/api/users/:uid', deleteUser);
-
-    app.put('/api/users/:uid', updateUser);
-
-    app.post('/api/profile', signup);
+const authController = (app) => {
+    app.post('/api/register', register);
+    app.post('/api/profile', profile);
     app.post('/api/login', login);
     app.post('/api/logout', logout);
-} 
+}
+
+export default authController;

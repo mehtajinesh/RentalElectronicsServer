@@ -1,28 +1,37 @@
-require('dotenv').config()
+import 'dotenv/config';
+import express from 'express';
+import cors from 'cors';
+import mongoose from "mongoose";
+import session from "express-session";
+import userController from "./controllers/user-controller.js";
+import authController from "./controllers/auth-controller.js";
+import profileController from "./controllers/profile-controller.js";
 
-const mongoose = require('mongoose');
-const express = require('express');
-const cors = require('cors');
 const app = express();
-const session = require('express-session');
-const userDao = require('./dao/user-dao');
 
 const CONNECTION_STRING = process.env.DB_CONNECTION_STRING;
 
 mongoose.connect(CONNECTION_STRING);
 
-app.use(cors());
-app.use(express.json());
-app.use(session({
-    secret: process.env.SESSION_KEY,
-    cookie: {secure: true},
+app.use(cors({
+  origin: 'http://localhost:3000',
+  credentials: true
 }));
 
+app.use(session({
+  secret: process.env.SESSION_KEY,
+  saveUninitialized: true,
+  resave: true,
+  cookie: {
+    secure: false,
+    maxAge: 60000,
+  },
+}));
 
-const userController = require('./controllers/user-controller');
-const cartController = require('./controllers/cart-controller');
+app.use(express.json());
 
 userController(app);
-cartController(app);
+authController(app);
+profileController(app);
 
 app.listen(4000);
