@@ -13,7 +13,6 @@ import featureController from "./controllers/feature-controller.js"
 const app = express();
 
 const CONNECTION_STRING = process.env.DB_CONNECTION_STRING;
-// const CONNECTION_STRING='mongodb+srv://jineshmehta:testwebdevelop@cluster0.lqj4r.mongodb.net/rentronics?retryWrites=true&w=majority'
 mongoose.connect(CONNECTION_STRING);
 
 app.use(cors({
