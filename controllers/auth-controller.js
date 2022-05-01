@@ -1,5 +1,12 @@
 import * as userDao from "../database/users/user-dao.js";
 
+const authController = (app) => {
+    app.post('/api/register', register);
+    app.post('/api/profile', profile);
+    app.post('/api/login', login);
+    app.post('/api/logout', logout);
+}
+
 const register = async (req, res) => {
     const user = req.body;
     const existingUser = await userDao.findUserByCredentials(user.email, user.password);
@@ -43,11 +50,5 @@ const logout = (req, res) => {
     res.sendStatus(200);
 }
 
-const authController = (app) => {
-    app.post('/api/register', register);
-    app.post('/api/profile', profile);
-    app.post('/api/login', login);
-    app.post('/api/logout', logout);
-}
 
 export default authController;
