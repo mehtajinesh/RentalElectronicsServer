@@ -17,8 +17,7 @@ export const findUserByCredentials = async (email, password) => {
 }
 
 export const createUser = async (user) => {
-    const status = await userModel.create(user);
-    return status;
+    return await userModel.create(user);
 }
 
 export const deleteUser = async (uid) => {

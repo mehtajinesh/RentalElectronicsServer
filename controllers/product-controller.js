@@ -1,7 +1,8 @@
 import {
     daoGetProductFromID, 
     daoAddProduct,
-    daoFindAllItems
+    daoFindAllItems,
+    daoUpdateProduct
 } from "../database/products/products-dao.js";
 import {
     daoAddItemToCartForUser,
@@ -121,6 +122,14 @@ const findAllProducts = async (req, res) => {
     res.json(listedItems);
 }
 
+
+const updateProduct = async (req, res) => {
+    const pid = req.params['pid'];
+    const product = req.body;
+    const status = await daoUpdateProduct(mongoose.Types.ObjectId(pid), product);
+    res.json(status);
+}
+
 export default (app) => {
     app.get('/api/product/:pid', getProductDetails); // productID
     app.post('/api/addProductToCart', addProductToCart); //loggedIn, userID, productID, productCount
@@ -129,4 +138,8 @@ export default (app) => {
 
     app.post('/api/product/:uid', addProduct);
     app.get('/api/products/listedItems', findAllProducts);
+    app.put('/api/product/:pid', updateProduct);
+
 }
+
+

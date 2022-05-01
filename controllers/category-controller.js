@@ -8,6 +8,7 @@ export default (app) => {
     app.get('/api/category/name/:catName', getCategoryByName);
     app.get('/api/category/brands/:cid', getAllBrands);
     app.post('/api/category', addCategory);
+    app.post('/api/category/productCategory', addProductCategory);
     app.delete('/api/category/:cid', deleteCategory);
     // app.put('/api/users/:uid', updateUser);
 }
@@ -42,3 +43,10 @@ const getAllBrands = async (req, res) => {
 
     res.json(brands);
 }
+
+const addProductCategory = async (req, res) => {
+    const productCategory = req.body;
+    const response = await productCategoryDao.daoAddProductCategory(productCategory);
+    res.json(response);
+}
+
