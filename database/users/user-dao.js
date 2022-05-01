@@ -5,7 +5,7 @@ export const findAllUsers = async () => {
   }
 
 export const findUserById = async (uid) => {
-    return await userModel.findById(uid);
+    return userModel.findById({_id: uid});
   }
 
 export const findUserByEmail = async (email) => {
