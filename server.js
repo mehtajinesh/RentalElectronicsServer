@@ -1,39 +1,42 @@
-require('dotenv').config()
+import 'dotenv/config';
+import express from 'express';
+import cors from 'cors';
+import mongoose from "mongoose";
+import session from "express-session";
+import userController from "./controllers/user-controller.js";
+import authController from "./controllers/auth-controller.js";
+import profileController from "./controllers/profile-controller.js";
+import productController from "./controllers/product-controller.js";
+import categoryController from "./controllers/category-controller.js"
+import featureController from "./controllers/feature-controller.js"
 
-const mongoose = require('mongoose');
-const express = require('express');
-const cors = require('cors');
 const app = express();
-const session = require('express-session');
-const userDao = require('./database/user/user-dao');
 
 const CONNECTION_STRING = process.env.DB_CONNECTION_STRING;
-
 mongoose.connect(CONNECTION_STRING);
 
 app.use(cors({
-    origin: 'http://localhost:3000',
-    credentials: true
+  origin: 'http://localhost:3000',
+  credentials: true
 }));
 
 app.use(session({
-    secret: process.env.SESSION_KEY,
-    saveUninitialized: true,
-    resave: true,
-    cookie: {
-        secure: false,
-        maxAge: 60000 * 30,
-    },
+  secret: process.env.SESSION_KEY,
+  saveUninitialized: true,
+  resave: true,
+  cookie: {
+    secure: false,
+    maxAge: 60000 * 30,
+  },
 }));
 
 app.use(express.json());
 
-
-const userController = require('./database/user/user-controller');
-const authController = require('./database/auth/auth-controller');
-
-
 userController(app);
 authController(app);
+profileController(app);
+productController(app);
+categoryController(app);
+featureController(app);
 
 app.listen(4000);
