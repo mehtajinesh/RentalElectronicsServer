@@ -16,6 +16,7 @@ export const findUserByCredentials = (email, password) => {
     return userModel.findOne({email: email, password: password});
 }
 
+
 export const createUser = (user) => {
     const status = userModel.create(user);
     return status;

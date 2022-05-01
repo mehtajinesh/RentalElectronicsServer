@@ -9,3 +9,6 @@ export const daoAddProduct = (product) => productsModel.create(product);
 export const daoDeleteProduct = (productID) => productsModel.deleteOne({_id: productID});
 export const daoUpdateProduct = (productID, updatedProduct) => productsModel.updateOne({_id: productID}, {$set: updatedProduct})
 export const daoUpdateProductAvailableItemsForProduct = (productID, newAvailable) => productsModel.updateOne({_id: productID},{totalSold:newAvailable})
+
+// this to check if api is working
+export const daoFindAllItems = () => productsModel.find();
