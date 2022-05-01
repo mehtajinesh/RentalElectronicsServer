@@ -4,4 +4,4 @@ export const daoFindCartForUser = (uID) => cartModel.find({userID: uID}).populat
 export const daoAddItemToCartForUser = (item) => cartModel.create(item);
 export const daoDeleteCartForUser = (userID) => cartModel.deleteOne({userID: userID});
 export const daoDeleteItemFromCartForUser = (userID, productID) => cartModel.deleteOne({userID: userID, productID:productID});
-export const daoUpdateProductCountCartForUser = (userID, productID, newCount) => cartModel.updateOne({userID: userID,productID:productID}, {productCount: newCount})
+export const daoUpdateProductCountCartForUser = (userID, productID, newCount) => cartModel.findOneAndUpdate({userID: userID,productID:productID}, {$inc : {'productCount' : newCount}})
