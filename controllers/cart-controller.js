@@ -1,4 +1,5 @@
 import {
+    daoDeleteCartForUser,
     daoDeleteItemFromCartForUser,
     daoFindCartForUser,
     daoUpdateProductCountCartForUser
@@ -9,12 +10,9 @@ import {daoAddUserOrder} from "../database/userOrders/user-orders-dao.js";
 
 const getCartData = async (req, res) => {
     let cartData = {}
-    const isLoggedIn = req.query['loggedIn']
-    // check if user loggedin
-    if(isLoggedIn)
+    const userID = req.query['userID']    // check if user loggedin
+    if(userID)
     {
-        // get user id from body
-        const userID = req.query['userID']
         // get user cart and send to front end
         cartData = await daoFindCartForUser(userID)
         res.json(cartData);
@@ -24,26 +22,30 @@ const getCartData = async (req, res) => {
 }
 
 const removeCartItem = async (req, res) => {
-    const loggedIn = req.query['loggedIn']
-    if (loggedIn){
-        const userID = req.query['userID']
+    const userID = req.query['userID']
+    let cartData = {}
+    if (userID){
         const productID = req.query['productID']
         await daoDeleteItemFromCartForUser(userID,productID);
-        res.send(200);
+        // get user cart and send to front end
+        cartData = await daoFindCartForUser(userID)
+        res.json(cartData);
         return
     }
     res.send(401)
 }
 
 const updateItemCountCart = async (req, res) => {
-    const loggedIn = req.query['loggedIn']
-    if (loggedIn){
-        const userID = req.query['userID']
+    let cartData = {}
+    const userID = req.query['userID']
+    if (userID){
         const productID = req.query['productID']
         const newCount = req.query['newCount']
         if (newCount === "0" ){
             await daoDeleteItemFromCartForUser(userID,productID);
-            res.send(200);
+            // get user cart and send to front end
+            cartData = await daoFindCartForUser(userID)
+            res.json(cartData);
             return
         }
         await daoUpdateProductCountCartForUser(userID,productID,parseInt(newCount));
@@ -54,9 +56,8 @@ const updateItemCountCart = async (req, res) => {
 }
 
 const placeOrder = async (req, res) => {
-    const isLoggedIn = req.query['loggedIn']
-    if (isLoggedIn){
-        const userID = req.query['userID']
+    const userID = req.query['userID']
+    if (userID){
         // get user cart from database
         const currentCart = await daoFindCartForUser(userID)
         // check if all the items are available in stock
@@ -82,7 +83,7 @@ const placeOrder = async (req, res) => {
             const listSoldProductCounts = []
             for (const item of availableItems){
                 // update sold count in the product table
-                await daoUpdateProductAvailableItemsForProduct(item['productID'], item['soldCount'] - item['buyCount'])
+                await daoUpdateProductAvailableItemsForProduct(item['productID'], item['soldCount'] + item['buyCount'])
                 // add product and count to list
                 listSoldProductIds.push(item['productID'])
                 listSoldProductCounts.push(item['buyCount'])
@@ -91,6 +92,9 @@ const placeOrder = async (req, res) => {
             const orderID = await daoAddOrder({'orderDate':(new Date()).toLocaleDateString(),'productID':listSoldProductIds,'itemCount':listSoldProductCounts})
             // add order to user
             await daoAddUserOrder({"userID":userID,"orderID":orderID})
+
+            //clear cart
+            await daoDeleteCartForUser(userID);
             res.send(200);
             return
         }
@@ -105,7 +109,7 @@ const placeOrder = async (req, res) => {
 }
 
 export default (app) => {
-    app.get('/api/cart', getCartData); //loggedIn and userID needed
+    app.post('/api/cart', getCartData); //loggedIn and userID needed
     app.post('/api/updateItemCountCart', updateItemCountCart); // loggedIn and userID, productID, updatedCount
     app.post('/api/removeItemCart', removeCartItem); // loggedIn and userID, productID
     app.post('/api/placeOrder', placeOrder); // loggedIn and userID needed
