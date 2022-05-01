@@ -8,6 +8,7 @@ import {daoGetPopularReviews} from "../database/reviews/review-dao.js";
 import {daoGetAllUserProductForReviews} from "../database/productReview/product-review-dao.js";
 import {daoGetAllRecentlyViewedForUser} from "../database/recentlyViewed/recently-viewed-dao.js";
 import {daoGetAllProductsForCategory} from "../database/productCategory/product-category-dao.js";
+import mongoose from "mongoose";
 
 const getHomePageData = async (req, res) => {
     const homePageData = {}
@@ -47,17 +48,16 @@ const getHomePageData = async (req, res) => {
     const popularReviewIDs = await daoGetPopularReviews();
     homePageData['popularReviews'] = await daoGetAllUserProductForReviews(popularReviewIDs)
     // if logged in, fetch recently viewed items
-    const isLoggedIn = req.query['loggedIn']
-    if (isLoggedIn)
+    const userID = req.query['userID']
+    if (userID)
     {
         // fetch recently viewed items
-        const userID = req.query['userID']
         // get all recently viewed product ids for this user
-        homePageData['recentItems'] = await daoGetAllRecentlyViewedForUser(userID)
+        homePageData['recentItems'] = await daoGetAllRecentlyViewedForUser(mongoose.Types.ObjectId(userID))
     }
     res.json(homePageData);
 }
 
 export default (app) => {
-    app.get('/api/home', getHomePageData); //userID and loggedIn expected in requested
+    app.post('/api/home', getHomePageData); //userID expected in requested
 }
