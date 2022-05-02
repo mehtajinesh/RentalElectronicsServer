@@ -1,8 +1,13 @@
-import {daoGetProductFromID} from "../database/products/products-dao.js";
+import {    
+    daoGetProductFromID, 
+    daoAddProduct,
+    daoFindAllItems,
+    daoUpdateProduct} from "../database/products/products-dao.js";
 import {
     daoAddItemToCartForUser,
     daoFindCartForUser,
     daoUpdateProductCountCartForUser
+
 } from "../database/cart/cart-dao.js";
 import mongoose from "mongoose";
 import {
@@ -109,9 +114,37 @@ const addProductToWishlist = async (req, res) => {
     res.send(401)
 }
 
+
+const addProduct = async (req, res) => {
+    const product = req.body;
+    const insertedProduct = await daoAddProduct(product);
+    res.json(insertedProduct);
+}
+
+// only for testing to see if products are added
+const findAllProducts = async (req, res) => {
+    const listedItems = await daoFindAllItems();
+    res.json(listedItems);
+}
+
+
+const updateProduct = async (req, res) => {
+    const pid = req.params['pid'];
+    const product = req.body;
+    const status = await daoUpdateProduct(mongoose.Types.ObjectId(pid), product);
+    res.json(status);
+}
+
 export default (app) => {
     app.post('/api/product', getProductDetails); // productID
     app.post('/api/addProductToCart', addProductToCart); //userID, productID, productCount
     app.post('/api/addProductToRecentlyViewed', addProductToRecentlyViewed); //userID, productID
     app.post('/api/addProductToWishlist', addProductToWishlist);//userID, productID
+
+    app.post('/api/product/:uid', addProduct);
+    app.get('/api/products/listedItems', findAllProducts);
+    app.put('/api/product/:pid', updateProduct);
+
 }
+
+

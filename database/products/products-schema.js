@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import usersModel from "../users/users-model.js";
+import UserModel from "../users/user-model.js";
 import categoryModel from "../category/category-model.js";
 
 const productsSchema = mongoose.Schema({
@@ -9,7 +9,7 @@ const productsSchema = mongoose.Schema({
     duration: Number,
     location: String,
     postDate: String,
-    sellerID: {type: mongoose.Schema.Types.ObjectId, ref: 'usersModel'},
+    sellerID: {type: mongoose.Schema.Types.ObjectId, ref: 'UserModel'},
     price: Number,
     productImages: [],
     totalAvailable: Number,
