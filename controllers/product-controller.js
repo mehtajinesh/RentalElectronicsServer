@@ -1,13 +1,13 @@
-import {
+import {    
     daoGetProductFromID, 
     daoAddProduct,
     daoFindAllItems,
-    daoUpdateProduct
-} from "../database/products/products-dao.js";
+    daoUpdateProduct} from "../database/products/products-dao.js";
 import {
     daoAddItemToCartForUser,
     daoFindCartForUser,
-    daoUpdateProductCountCartForUser,
+    daoUpdateProductCountCartForUser
+
 } from "../database/cart/cart-dao.js";
 import mongoose from "mongoose";
 import {
@@ -15,21 +15,26 @@ import {
     daoGetAllRecentlyViewedForUser
 } from "../database/recentlyViewed/recently-viewed-dao.js";
 import {daoCreateUserWishlist, daoGetWishlistForUser} from "../database/wishlist/wishlist-dao.js";
+import {
+    daoGetAllFeaturesForProduct,
+    daoGetAllFeaturesIDsForProduct
+} from "../database/productFeatures/product-feature-dao.js";
+import {daoFindReviewForProduct} from "../database/productReview/product-review-dao.js";
 
 const getProductDetails = async (req, res) => {
     // get productID
-    const productID = req.params['pid'];
-    // const productID = req.query['productID']
-    const productData = await daoGetProductFromID(productID)
+    const productData = {}
+    const productID = req.query['productID']
+    productData["productDetails"] = await daoGetProductFromID(mongoose.Types.ObjectId(productID))
+    productData["productFeatures"] = await daoGetAllFeaturesForProduct(mongoose.Types.ObjectId(productID))
+    productData["productReviews"] = await daoFindReviewForProduct(mongoose.Types.ObjectId(productID))
     res.json(productData);
 }
 
 const addProductToCart = async (req, res) => {
     // get loggedIn
-    const isLoggedIn = req.query['loggedIn']
-    if(isLoggedIn){
-        // get user id
-        const userID = req.query['userID']
+    const userID = req.query['userID']
+    if(userID){
         // get product id
         const productID = req.query['productID']
         // get product count
@@ -56,10 +61,9 @@ const addProductToCart = async (req, res) => {
 
 const addProductToRecentlyViewed = async (req, res) => {
     // get loggedIn
-    const isLoggedIn = req.query['loggedIn']
-    if(isLoggedIn){
+    const userID = req.query['userID']
+    if(userID){
         // get user id
-        const userID = req.query['userID']
         // get product id
         const productID = req.query['productID']
         // check if item already in recently viewed
@@ -84,8 +88,8 @@ const addProductToRecentlyViewed = async (req, res) => {
 
 const addProductToWishlist = async (req, res) => {
     // get loggedIn
-    const isLoggedIn = req.query['loggedIn']
-    if(isLoggedIn){
+    const userID = req.query['userID']
+    if(userID){
         // get user id
         const userID = req.query['userID']
         // get product id
@@ -110,6 +114,7 @@ const addProductToWishlist = async (req, res) => {
     res.send(401)
 }
 
+
 const addProduct = async (req, res) => {
     const product = req.body;
     const insertedProduct = await daoAddProduct(product);
@@ -131,10 +136,10 @@ const updateProduct = async (req, res) => {
 }
 
 export default (app) => {
-    app.get('/api/product/:pid', getProductDetails); // productID
-    app.post('/api/addProductToCart', addProductToCart); //loggedIn, userID, productID, productCount
-    app.post('/api/addProductToRecentlyViewed', addProductToRecentlyViewed); //loggedIn, userID, productID
-    app.post('/api/addProductToWishlist', addProductToWishlist);//loggedIn, userID, productID
+    app.post('/api/product', getProductDetails); // productID
+    app.post('/api/addProductToCart', addProductToCart); //userID, productID, productCount
+    app.post('/api/addProductToRecentlyViewed', addProductToRecentlyViewed); //userID, productID
+    app.post('/api/addProductToWishlist', addProductToWishlist);//userID, productID
 
     app.post('/api/product/:uid', addProduct);
     app.get('/api/products/listedItems', findAllProducts);

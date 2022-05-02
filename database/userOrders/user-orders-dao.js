@@ -1,5 +1,6 @@
 import userOrderModel from './user-orders-model.js';
 
+export const daoGetAllOrdersForUser = (userID) => userOrderModel.find({userID: userID});
 export const findOrdersByUser = async (uid) => {
   return await userOrderModel.find({userID: uid}).populate({
     path: "orderID", populate: {

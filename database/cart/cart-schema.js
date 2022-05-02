@@ -1,9 +1,9 @@
 import mongoose from 'mongoose';
-import UserModel from "../users/user-model.js";
+import usersModel from "../users/users-model.js";
 import productsModel from "../products/products-model.js";
 
 const cartSchema = mongoose.Schema({
-    userID: {type: mongoose.Schema.Types.ObjectId, ref: 'UserModel'},
+    userID: {type: mongoose.Schema.Types.ObjectId, ref: 'usersModel'},
     productID: {type: mongoose.Schema.Types.ObjectId, ref: 'productsModel'},
     productCount: Number,
 }, {collection: 'cart'});
