@@ -25,7 +25,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
     extended: true
 }));
-app.use(cors());
 app.use(express.json());
 dotenv.config();
 
@@ -62,4 +61,4 @@ searchController(app);
 app.get('/', (request, response) => {
     response.send("Welcome to Rentronics");
 });
-app.listen(process.env.PORT || 4000)
+app.listen(4000)
