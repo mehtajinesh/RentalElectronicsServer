@@ -1,5 +1,4 @@
-import {    
-    daoGetProductFromID, 
+import {daoGetProductFromID,
     daoAddProduct,
     daoFindAllItems,
     daoUpdateProduct} from "../database/products/products-dao.js";
@@ -7,7 +6,6 @@ import {
     daoAddItemToCartForUser,
     daoFindCartForUser,
     daoUpdateProductCountCartForUser
-
 } from "../database/cart/cart-dao.js";
 import mongoose from "mongoose";
 import {
@@ -113,8 +111,6 @@ const addProductToWishlist = async (req, res) => {
     }
     res.send(401)
 }
-
-
 const addProduct = async (req, res) => {
     const product = req.body;
     const insertedProduct = await daoAddProduct(product);
@@ -144,7 +140,4 @@ export default (app) => {
     app.post('/api/product/:uid', addProduct);
     app.get('/api/products/listedItems', findAllProducts);
     app.put('/api/product/:pid', updateProduct);
-
 }
-
-

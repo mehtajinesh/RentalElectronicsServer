@@ -28,7 +28,8 @@ app.use(bodyParser.urlencoded({
 app.use(express.json());
 dotenv.config();
 
-const CONNECTION_STRING = process.env.DB_CONNECTION_STRING
+// const CONNECTION_STRING ="mongodb+srv://jineshmehta:testwebdevelop@cluster0.lqj4r.mongodb.net/rentronics?retryWrites=true&w=majority"
+const CONNECTION_STRING=process.env.DB_CONNECTION_STRING
 mongoose.connect(CONNECTION_STRING);
 
 app.use(cors({

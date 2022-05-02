@@ -1,17 +1,21 @@
 import {daoGetAllProductsForQuery} from "../database/products/products-dao.js";
 import {
-    daoGetAllFeaturesIDsForProduct
+    daoGetAllFeaturesForProduct, daoGetAllFeaturesIDsForProduct
 } from "../database/productFeatures/product-feature-dao.js";
-import {daoGetAllCategoryForProduct} from "../database/productCategory/product-category-dao.js";
-import mongoose from "mongoose";
+import {
+    daoGetAllCategoryForProduct, daoGetAllProductsIDsForCategory
+} from "../database/productCategory/product-category-dao.js";
+import {daoGetAllCategories, daoGetCategoryIDForCategoryName} from "../database/category/category-dao.js";
 
 const getSearchResults = async (req, res) => {
     // get searchKey
-    const searchKey = req.query['searchKey']
+    const searchKey = req.body['searchKeyword']
     // get category id
-    const categoryID = req.query['categoryID']
+    const categoryName = req.body['category']
+    const categoryData = await daoGetCategoryIDForCategoryName(categoryName)
     // get featuresFilter list
-    const featuresFilterIDsList = req.query['featuresFilterIDsList'].split(',')
+    const featuresFilterList = req.body['activeFeatureFilterIDs']
+    const featuresFilterIDsList = featuresFilterList.map((feature) => {return feature['featureID']["_id"]})
     // get search results and send to front end
     const searchResults = await daoGetAllProductsForQuery(searchKey)
     const searchResultsWithFilters = []
@@ -20,15 +24,34 @@ const getSearchResults = async (req, res) => {
         const productFeatures = await daoGetAllFeaturesIDsForProduct(productID)
         const productFeaturesString = productFeatures.map((objectID)=>{ return objectID.toString()})
         const productCategoryIDs = await daoGetAllCategoryForProduct(productID)
-        const productCategoriesString = productCategoryIDs.map((objectID)=>{ return objectID.toString()})
+        const productCategoryString = productCategoryIDs.map((objectID)=>{ return objectID.toString()})
         const overlapFeatures = featuresFilterIDsList.filter(value => productFeaturesString.indexOf(value) !== -1)
-        if (overlapFeatures.length !== 0 && productCategoriesString.includes(categoryID)) {
+        if (featuresFilterIDsList.length === 0 && productCategoryString.includes(categoryData["_id"].toString())){
+            searchResultsWithFilters.push(item)
+        }
+        else if (overlapFeatures.length !== 0 && productCategoryString.includes(categoryData["_id"].toString())) {
             searchResultsWithFilters.push(item)
         }
     }
     res.json(searchResultsWithFilters);
 }
 
+const getCategoryFeatures = async (req, res) => {
+    const data = {}
+    const allCategories = await daoGetAllCategories()
+    for (const category of allCategories) {
+        const featuresIDsList = []
+        const productIDs = await daoGetAllProductsIDsForCategory(category['_id'])
+        for (const productID of productIDs){
+            const productFeatures = await daoGetAllFeaturesForProduct(productID)
+            featuresIDsList.push(...productFeatures)
+        }
+        data[category['categoryName']] = featuresIDsList
+    }
+    res.json(data);
+}
+
 export default (app) => {
-    app.get('/api/search', getSearchResults); //searchKey, categoryID, featuresFilterIDsList
+    app.post('/api/search', getSearchResults); //searchKey, categoryID, featuresFilterIDsList
+    app.get('/api/categoryFeatures', getCategoryFeatures);
 }
