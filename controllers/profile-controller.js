@@ -1,13 +1,11 @@
 import * as orderDao from "../database/userOrders/user-orders-dao.js";
 import * as productDao from "../database/products/products-dao.js";
 import * as wishlistDao from "../database/wishlist/wishlist-dao.js";
-import mongoose from "mongoose";
 import {
   daoAddProductReview,
   daoFindReviewForUser
 } from "../database/productReview/product-review-dao.js";
 import {daoAddReview} from "../database/reviews/review-dao.js";
-import * as Types from "mongoose";
 
 const profileController = (app) => {
   app.get('/api/users/:uid/rentals', getRentalByUser);

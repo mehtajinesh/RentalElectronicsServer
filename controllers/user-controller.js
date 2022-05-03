@@ -3,7 +3,7 @@ import {
     daoDeleteUserInformation, daoGetAllUserInformationForUser,
     daoGetAllUsersInformation, daoUpdateUserInformation
 } from "../database/userInformation/userInformation-dao.js";
-import {daoCreateUser, daoDeleteUser, daoFindUserRoleGivenID, daoUpdateUser} from "../database/users/user-dao.js";
+import {daoDeleteUser, daoFindUserRoleGivenID, daoUpdateUser} from "../database/users/user-dao.js";
 import {daoDeleteCartForUser} from "../database/cart/cart-dao.js";
 import {daoDeleteWishlistForUser} from "../database/wishlist/wishlist-dao.js";
 import {daoDeleteAllOrderForUser} from "../database/userOrders/user-orders-dao.js";

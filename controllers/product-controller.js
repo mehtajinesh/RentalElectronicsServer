@@ -19,7 +19,7 @@ import {daoFindReviewForProduct} from "../database/productReview/product-review-
 const getProductDetails = async (req, res) => {
     // get productID
     const productData = {}
-    const productID = req.query['productID']
+    const productID = req.params['productID']
     productData["productDetails"] = await daoGetProductFromID(mongoose.Types.ObjectId(productID))
     productData["productFeatures"] = await daoGetAllFeaturesForProduct(mongoose.Types.ObjectId(productID))
     productData["productReviews"] = await daoFindReviewForProduct(mongoose.Types.ObjectId(productID))
@@ -62,7 +62,7 @@ const addProductToRecentlyViewed = async (req, res) => {
         // get product id
         const productID = req.query['productID']
         // check if item already in recently viewed
-        // if yes then dont do anything
+        // if yes then don't do anything
         // if not then add item to recently viewed item
         const existingRecentViews = await daoGetAllRecentlyViewedForUser(userID)
         const recentItems = existingRecentViews.map(item => item["productID"]["_id"].toString())
@@ -90,7 +90,7 @@ const addProductToWishlist = async (req, res) => {
         // get product id
         const productID = req.query['productID']
         // check if item already in wishlist
-        // if yes then dont do anything
+        // if yes then don't do anything
         // if not then add item to wishlist
         const existingWishlist = await daoGetWishlistForUser(userID)
         const wishlistItems = existingWishlist.map(item => item["productID"]["_id"].toString())
@@ -116,18 +116,18 @@ const addProduct = async (req, res) => {
 }
 
 const updateProduct = async (req, res) => {
-    const pid = req.params['pid'];
-    const product = req.body;
-    const status = await daoUpdateProduct(mongoose.Types.ObjectId(pid), product);
-    res.json(status);
+    const productID = req.params['pid'];
+    const productData = req.body;
+    await daoUpdateProduct(productID, productData);
+    res.json(200);
 }
 
 export default (app) => {
-    app.post('/api/product', getProductDetails); // productID
+    app.get('/api/product/:productID', getProductDetails); // productID
+    app.post('/api/addProductToApp', addProduct);
+    app.put('/api/product/:pid', updateProduct);
+
     app.post('/api/addProductToCart', addProductToCart); //userID, productID, productCount
     app.post('/api/addProductToRecentlyViewed', addProductToRecentlyViewed); //userID, productID
     app.post('/api/addProductToWishlist', addProductToWishlist);//userID, productID
-
-    app.post('/api/product/:uid', addProduct);
-    app.put('/api/product/:pid', updateProduct);
 }

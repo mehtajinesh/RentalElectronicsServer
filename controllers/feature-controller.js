@@ -21,8 +21,8 @@ const addFeature = async (req, res) => {
 }
 
 const addProductFeature = async (req, res) => {
-    const productFeautre = req.body;
-    const response = await productFeatureDao.daoAddProductFeature(productFeautre);
+    const productFeature = req.body;
+    const response = await productFeatureDao.daoAddProductFeature(productFeature);
     res.json(response);
 }
 

@@ -88,7 +88,7 @@ const placeOrder = async (req, res) => {
                 listSoldProductIds.push(item['productID'])
                 listSoldProductCounts.push(item['buyCount'])
             }
-            // add order to order table
+            // add order information to order table
             const orderID = await daoAddOrder({'orderDate':(new Date()).toLocaleDateString(),'productID':listSoldProductIds,'itemCount':listSoldProductCounts})
             // add order to user
             await daoAddUserOrder({"userID":userID,"orderID":orderID})
