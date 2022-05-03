@@ -1,46 +1,41 @@
-import * as featureDao from "../database/features/features-dao.js"
-import * as productFeatureDao from "../database/productFeatures/product-feature-dao.js"
-import mongoose from "mongoose";
+import {daoAddFeature, daoGetFeatureForID, daoUpdateFeature} from "../database/features/features-dao.js";
+import {daoAddProductFeature, daoGetAllFeaturesIDsForProduct} from "../database/productFeatures/product-feature-dao.js";
 
 export default (app) => {
-    // app.get('/api/feature/name/:catName', getCategoryByName);
-    // app.get('/api/category/brands/:cid', getAllBrands);
     app.post('/api/features', addFeature);
     app.post('/api/features/productFeature', addProductFeature);
     app.get('/api/features/fid/:pid', getAllFeaturesIDsForProduct);
     app.get('/api/features/:fid', getFeatureById);
-
-    // app.delete('/api/category/:cid', deleteCategory);
     app.put('/api/features/:fid', updateFeature);
 }
 
 const addFeature = async (req, res) => {
     const feature = req.body;
-    const insertedFeature = await featureDao.daoAddFeature(feature);
+    const insertedFeature = await daoAddFeature(feature);
     res.json(insertedFeature);
 }
 
 const addProductFeature = async (req, res) => {
     const productFeature = req.body;
-    const response = await productFeatureDao.daoAddProductFeature(productFeature);
+    const response = await daoAddProductFeature(productFeature);
     res.json(response);
 }
 
 const getAllFeaturesIDsForProduct = async (req, res) => {
     const productID = req.params['pid'];
-    const productData = await productFeatureDao.daoGetAllFeaturesIDsForProduct(productID)
+    const productData = await daoGetAllFeaturesIDsForProduct(productID)
     res.json(productData);
 }
 
 const getFeatureById = async (req, res) => {
     const featuredId = req.params['fid'];
-    const featureData = await featureDao.daoGetFeatureForID(featuredId);
+    const featureData = await daoGetFeatureForID(featuredId);
     res.json(featureData);
 }
 
 const updateFeature = async (req, res) => {
     const featureId = req.params['fid'];
     const updated_feature = req.body;
-    const status = await featureDao.daoUpdateFeature(mongoose.Types.ObjectId(featureId), updated_feature);
+    const status = await daoUpdateFeature(featureId, updated_feature);
     res.json(status); 
 }

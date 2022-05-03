@@ -9,15 +9,12 @@ import {daoGetAllCategories, daoGetCategoryIDForCategoryName} from "../database/
 
 const getSearchResults = async (req, res) => {
     // get searchKey
-    const searchKey = req.body['searchKeyword']
+    const searchKey = req.query['searchKeyword']
     // get category id
-    const categoryName = req.body['category']
+    const categoryName = req.query['category']
     const categoryData = await daoGetCategoryIDForCategoryName(categoryName)
     // get featuresFilter list
-    const featuresFilterList = req.body['activeFeatureFilterIDs']
-    const featuresFilterIDsList = featuresFilterList.map((feature) => {
-        return feature['featureID']["_id"]
-    })
+    const featuresFilterIDsList = req.query['activeFeatureFilterIDs'].length > 0 ? req.query['activeFeatureFilterIDs'].split(',') : []
     // get search results and send to front end
     const searchResults = await daoGetAllProductsForQuery(searchKey)
     const searchResultsWithFilters = []
@@ -57,6 +54,6 @@ const getCategoryFeatures = async (req, res) => {
 }
 
 export default (app) => {
-    app.post('/api/search', getSearchResults); //searchKey, categoryID, featuresFilterIDsList
+    app.get('/api/search', getSearchResults); //searchKey, categoryID, featuresFilterIDsList
     app.get('/api/categoryFeatures', getCategoryFeatures);
 }

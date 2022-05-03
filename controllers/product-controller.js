@@ -15,6 +15,8 @@ import {daoCreateUserWishlist, daoGetWishlistForUser} from "../database/wishlist
 import {
     daoGetAllFeaturesForProduct} from "../database/productFeatures/product-feature-dao.js";
 import {daoFindReviewForProduct} from "../database/productReview/product-review-dao.js";
+import {daoAddProductCategory} from "../database/productCategory/product-category-dao.js";
+import {daoGetCategoryIDForCategoryName} from "../database/category/category-dao.js";
 
 const getProductDetails = async (req, res) => {
     // get productID
@@ -111,7 +113,13 @@ const addProductToWishlist = async (req, res) => {
 
 const addProduct = async (req, res) => {
     const product = req.body;
+    // add product
     const insertedProduct = await daoAddProduct(product);
+    // link product to provided category
+    await daoAddProductCategory({productID:insertedProduct["_id"],categoryID:insertedProduct["categoryID"]})
+    // link product to all
+    const categoryData = await daoGetCategoryIDForCategoryName("All")
+    await daoAddProductCategory({productID:insertedProduct["_id"],categoryID:categoryData["_id"]})
     res.json(insertedProduct);
 }
 
