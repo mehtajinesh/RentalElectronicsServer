@@ -16,10 +16,7 @@ import categoryController from "./controllers/category-controller.js"
 import featureController from "./controllers/feature-controller.js"
 
 const app = express();
-// app.use(session({
-//     resave: false, saveUninitialized: true,
-//     secret: 'secret key'
-// }));
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
     extended: true
@@ -27,24 +24,23 @@ app.use(bodyParser.urlencoded({
 app.use(express.json());
 dotenv.config();
 
-// const CONNECTION_STRING ="mongodb+srv://jineshmehta:testwebdevelop@cluster0.lqj4r.mongodb.net/rentronics?retryWrites=true&w=majority"
 const CONNECTION_STRING=process.env.DB_CONNECTION_STRING
 mongoose.connect(CONNECTION_STRING);
 
-// app.use(cors({
-//   origin: 'http://localhost:3000',
-//   credentials: true
-// }));
-//
-// app.use(session({
-//   secret: process.env.SESSION_KEY,
-//   saveUninitialized: true,
-//   resave: true,
-//   cookie: {
-//     secure: false,
-//     maxAge: 60000 * 30,
-//   },
-// }));
+app.use(cors({
+  origin: 'http://localhost:3000',
+  credentials: true
+}));
+
+app.use(session({
+  secret: process.env.SESSION_KEY,
+  saveUninitialized: true,
+  resave: true,
+  cookie: {
+    secure: false,
+    maxAge: 60000 * 30,
+  },
+}));
 
 
 userController(app);
