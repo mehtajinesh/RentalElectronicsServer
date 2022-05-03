@@ -1,35 +1,11 @@
 import userModel from "./user-model.js";
 
-export const findAllUsers = () => {
-    return userModel.find();
-  }
-
-export const findUserById = (uid) => {
-    return userModel.findById(uid);
-  }
-
-export const findUserByEmail = (email) => {
-    return userModel.findOne({email: email});
-}
-
-export const findUserByCredentials = (email, password) => {
-    return userModel.findOne({email: email, password: password});
-}
-
-
-export const createUser = (user) => {
-    const status = userModel.create(user);
-    return status;
-}
-
-export const deleteUser = (uid) => {
-    const user = userModel.deleteOne({_id: uid});
-    return user;
-}
-
-export const updateUser = (uid, user) => {
-    const status = userModel.updateOne({_id: uid}, {$set: user});
-    return status;
-}
+export const createUser = (user) => userModel.create(user);
+export const findAllUsers = () => userModel.find();
+export const findUserById = (userID) => userModel.findById(userID);
+export const findUserByEmail = (email) => userModel.findOne({email: email});
+export const findUserByCredentials = (email, password) => userModel.findOne({email: email, password: password});
+export const updateUser = (userID, user) => userModel.updateOne({_id: uid}, {$set: user});
+export const deleteUser = (userID) => userModel.deleteOne({_id: userID});
 
 

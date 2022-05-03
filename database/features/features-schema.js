@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
 const featureSchema = mongoose.Schema({
-    FeatureName: String, FeatureValue: String,
+    FeatureName: {type: String, required: true}, FeatureValue: {type: String, required: true}
 }, {collection: 'features'});
 export default featureSchema;
