@@ -15,21 +15,26 @@ const getSearchResults = async (req, res) => {
     const categoryData = await daoGetCategoryIDForCategoryName(categoryName)
     // get featuresFilter list
     const featuresFilterList = req.body['activeFeatureFilterIDs']
-    const featuresFilterIDsList = featuresFilterList.map((feature) => {return feature['featureID']["_id"]})
+    const featuresFilterIDsList = featuresFilterList.map((feature) => {
+        return feature['featureID']["_id"]
+    })
     // get search results and send to front end
     const searchResults = await daoGetAllProductsForQuery(searchKey)
     const searchResultsWithFilters = []
     for (const item of searchResults) {
         const productID = item['_id']
         const productFeatures = await daoGetAllFeaturesIDsForProduct(productID)
-        const productFeaturesString = productFeatures.map((objectID)=>{ return objectID.toString()})
+        const productFeaturesString = productFeatures.map((objectID) => {
+            return objectID.toString()
+        })
         const productCategoryIDs = await daoGetAllCategoryForProduct(productID)
-        const productCategoryString = productCategoryIDs.map((objectID)=>{ return objectID.toString()})
+        const productCategoryString = productCategoryIDs.map((objectID) => {
+            return objectID.toString()
+        })
         const overlapFeatures = featuresFilterIDsList.filter(value => productFeaturesString.indexOf(value) !== -1)
-        if (featuresFilterIDsList.length === 0 && productCategoryString.includes(categoryData["_id"].toString())){
+        if (featuresFilterIDsList.length === 0 && productCategoryString.includes(categoryData["_id"].toString())) {
             searchResultsWithFilters.push(item)
-        }
-        else if (overlapFeatures.length !== 0 && productCategoryString.includes(categoryData["_id"].toString())) {
+        } else if (overlapFeatures.length !== 0 && productCategoryString.includes(categoryData["_id"].toString())) {
             searchResultsWithFilters.push(item)
         }
     }
@@ -42,7 +47,7 @@ const getCategoryFeatures = async (req, res) => {
     for (const category of allCategories) {
         const featuresIDsList = []
         const productIDs = await daoGetAllProductsIDsForCategory(category['_id'])
-        for (const productID of productIDs){
+        for (const productID of productIDs) {
             const productFeatures = await daoGetAllFeaturesForProduct(productID)
             featuresIDsList.push(...productFeatures)
         }

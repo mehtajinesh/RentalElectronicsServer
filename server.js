@@ -31,20 +31,20 @@ dotenv.config();
 const CONNECTION_STRING=process.env.DB_CONNECTION_STRING
 mongoose.connect(CONNECTION_STRING);
 
-app.use(cors({
-  origin: 'http://localhost:3000',
-  credentials: true
-}));
-
-app.use(session({
-  secret: process.env.SESSION_KEY,
-  saveUninitialized: true,
-  resave: true,
-  cookie: {
-    secure: false,
-    maxAge: 60000 * 30,
-  },
-}));
+// app.use(cors({
+//   origin: 'http://localhost:3000',
+//   credentials: true
+// }));
+//
+// app.use(session({
+//   secret: process.env.SESSION_KEY,
+//   saveUninitialized: true,
+//   resave: true,
+//   cookie: {
+//     secure: false,
+//     maxAge: 60000 * 30,
+//   },
+// }));
 
 
 userController(app);

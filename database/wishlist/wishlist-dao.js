@@ -5,3 +5,4 @@ export const daoCreateUserWishlist = (wishlist) => wishlistModel.create(wishlist
 export const daoDeleteProductFromWishlistForUser = (userID, productID) => wishlistModel.deleteOne({
     userID: userID, productID: productID
 });
+export const daoDeleteWishlistForUser = (userID) => wishlistModel.deleteMany({userID:userID})

@@ -7,7 +7,7 @@ export const daoFindReviewForProduct = (productID) => productReviewModel.find({p
 export const daoGetAllUserProductForReviews = (reviewIDs) => productReviewModel.find({'reviewID': {$in: reviewIDs}}).populate('productID').populate('userID').populate('reviewID');
 export const daoFindReviewForUser = (userID) => productReviewModel.find({userID: userID}).populate("productID").populate("sellerID").populate("reviewID");
 export const daoDeleteReviewForProduct = (productID) => productReviewModel.deleteOne({productID: productID});
-export const daoDeleteReviewForUser = (userID) => productReviewModel.deleteOne({userID: userID});
+export const daoDeleteReviewForUser = (userID) => productReviewModel.deleteMany({userID: userID});
 export const daoUpdateReviewForProduct = (productID, productReview) => productReviewModel.updateOne({productID: productID}, {$set: productReview})
 
 

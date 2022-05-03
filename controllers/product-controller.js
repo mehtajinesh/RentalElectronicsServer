@@ -1,6 +1,5 @@
 import {daoGetProductFromID,
     daoAddProduct,
-    daoFindAllItems,
     daoUpdateProduct} from "../database/products/products-dao.js";
 import {
     daoAddItemToCartForUser,
@@ -14,9 +13,7 @@ import {
 } from "../database/recentlyViewed/recently-viewed-dao.js";
 import {daoCreateUserWishlist, daoGetWishlistForUser} from "../database/wishlist/wishlist-dao.js";
 import {
-    daoGetAllFeaturesForProduct,
-    daoGetAllFeaturesIDsForProduct
-} from "../database/productFeatures/product-feature-dao.js";
+    daoGetAllFeaturesForProduct} from "../database/productFeatures/product-feature-dao.js";
 import {daoFindReviewForProduct} from "../database/productReview/product-review-dao.js";
 
 const getProductDetails = async (req, res) => {
@@ -111,18 +108,12 @@ const addProductToWishlist = async (req, res) => {
     }
     res.send(401)
 }
+
 const addProduct = async (req, res) => {
     const product = req.body;
     const insertedProduct = await daoAddProduct(product);
     res.json(insertedProduct);
 }
-
-// only for testing to see if products are added
-const findAllProducts = async (req, res) => {
-    const listedItems = await daoFindAllItems();
-    res.json(listedItems);
-}
-
 
 const updateProduct = async (req, res) => {
     const pid = req.params['pid'];
@@ -138,6 +129,5 @@ export default (app) => {
     app.post('/api/addProductToWishlist', addProductToWishlist);//userID, productID
 
     app.post('/api/product/:uid', addProduct);
-    app.get('/api/products/listedItems', findAllProducts);
     app.put('/api/product/:pid', updateProduct);
 }

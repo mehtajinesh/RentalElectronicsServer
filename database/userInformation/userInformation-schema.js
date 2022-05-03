@@ -5,8 +5,8 @@ const userInformationSchema = mongoose.Schema({
     userID: {type: mongoose.Schema.Types.ObjectId, ref: 'userModel', required: true},
     firstName: {type: String, required: true},
     lastName: {type: String, required: true},
-    DOB: Date,
-    phoneNumber: Number,
+    DOB: {type:String, required:true},
+    phoneNumber: {type:Number},
     profilePicture: {
         type: String, default: "https://www.gravatar.com/avatar/?d=identicon",
     },
