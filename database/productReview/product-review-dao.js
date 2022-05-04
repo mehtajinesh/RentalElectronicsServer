@@ -1,5 +1,5 @@
 import productReviewModel from './product-review-model.js';
-
+import reviewsModel from "../reviews/review-model.js";
 
 export const daoFindReviewForProduct = (pID) => productReviewModel.find({productID: pID}).populate('userID').populate('reviewID');
 export const daoGetAllUserProductForReviews = (reviewIDs) => productReviewModel.find({'reviewID': {$in: reviewIDs}}).populate('productID').populate('userID').populate('reviewID');
@@ -14,6 +14,14 @@ export const daoFindReviewForUser = async (uID) => {
       path: "sellerID"
     }
   }).populate("reviewID");
+}
+
+export const daoGetAllProductReviews = () => {
+  return productReviewModel.find().populate({
+      path: "productID", populate: {
+    path: "sellerID"
+  }
+}).populate("reviewID");
 }
 
 export const daoAddProductReview = (uid, pid, rid) => productReviewModel.create({userID: uid, productID: pid, reviewID: rid});

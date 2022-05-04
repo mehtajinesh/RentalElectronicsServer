@@ -14,8 +14,7 @@ import {
 } from "../database/recentlyViewed/recently-viewed-dao.js";
 import {daoCreateUserWishlist, daoGetWishlistForUser} from "../database/wishlist/wishlist-dao.js";
 import {
-    daoGetAllFeaturesForProduct,
-    daoGetAllFeaturesIDsForProduct
+    daoGetAllFeaturesForProduct
 } from "../database/productFeatures/product-feature-dao.js";
 import {daoFindReviewForProduct} from "../database/productReview/product-review-dao.js";
 

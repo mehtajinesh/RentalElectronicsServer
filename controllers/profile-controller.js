@@ -1,19 +1,22 @@
 import * as orderDao from "../database/userOrders/user-orders-dao.js";
 import * as productDao from "../database/products/products-dao.js";
 import * as wishlistDao from "../database/wishlist/wishlist-dao.js";
-import mongoose from "mongoose";
 import {
   daoAddProductReview,
-  daoFindReviewForUser
+  daoFindReviewForProduct,
+  daoFindReviewForUser,
+  daoGetAllProductReviews
 } from "../database/productReview/product-review-dao.js";
 import {daoAddReview} from "../database/reviews/review-dao.js";
-import * as Types from "mongoose";
+import mongoose from "mongoose";
+
 
 const profileController = (app) => {
   app.get('/api/users/:uid/rentals', getRentalByUser);
   app.get('/api/users/:uid/listings', getListingByUser);
   app.get('/api/users/:uid/wishlist', getWishlistByUser);
   app.get('/api/users/:uid/reviews', getReviewsByUser);
+  app.get('/api/users/:uid/products/reviews', getReviewsBySeller);
   app.post('/api/users/:uid/products/:pid/reviews', createReviewByUser);
 }
 
@@ -56,6 +59,17 @@ const getRentalByUser = async (req, res) => {
   const uid = req.params.uid;
   const rental = await orderDao.findOrdersByUser(uid);
   res.json(rental);
+}
+
+const getReviewsBySeller = async (req, res) => {
+  let reviews =[];
+  const uid = req.params.uid;
+  const listings = await productDao.daoGetAllProductsForSeller(uid);
+  for (let i = 0; i < listings.length; i++) {
+    const listing = await daoFindReviewForProduct(listings[i]._id);
+    reviews.push(listing);
+  }
+  res.json(reviews);
 }
 
 export default profileController;
