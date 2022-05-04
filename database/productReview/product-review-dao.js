@@ -18,8 +18,9 @@ export const daoFindReviewForUser = async (uID) => {
 
 export const daoGetAllProductReviews = () => {
   return productReviewModel.find().populate({
-      path: "productID", populate: {
-    path: "sellerID"
+    path: "productID",
+    populate: {
+        path: "sellerID"
   }
 }).populate("reviewID");
 }
