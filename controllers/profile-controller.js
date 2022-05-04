@@ -63,11 +63,14 @@ const getRentalByUser = async (req, res) => {
 
 const getReviewsBySeller = async (req, res) => {
   let reviews =[];
+
   const uid = req.params.uid;
   const listings = await productDao.daoGetAllProductsForSeller(uid);
   for (let i = 0; i < listings.length; i++) {
-    const listing = await daoFindReviewForProduct(listings[i]._id);
-    reviews.push(listing);
+    let review = {};
+    review.product = listings[i];
+    review.review = await daoFindReviewForProduct(listings[i]._id);
+    reviews.push(review);
   }
   res.json(reviews);
 }
