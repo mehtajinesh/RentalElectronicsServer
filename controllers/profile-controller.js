@@ -1,11 +1,11 @@
-import * as orderDao from "../database/userOrders/user-orders-dao.js";
-import * as productDao from "../database/products/products-dao.js";
-import * as wishlistDao from "../database/wishlist/wishlist-dao.js";
 import {
   daoAddProductReview,
   daoFindReviewForUser
 } from "../database/productReview/product-review-dao.js";
 import {daoAddReview} from "../database/reviews/review-dao.js";
+import {daoGetWishlistForUser} from "../database/wishlist/wishlist-dao.js";
+import {daoGetAllProductsForSeller} from "../database/products/products-dao.js";
+import {daoGetAllOrdersForUser} from "../database/userOrders/user-orders-dao.js";
 
 const profileController = (app) => {
   app.get('/api/users/:uid/rentals', getRentalByUser);
@@ -16,20 +16,12 @@ const profileController = (app) => {
 }
 
 const createReviewByUser = async (req, res) => {
-  const userUid = req.params.uid === "me" && req.session['profile'] ? req.session['profile']._id : req.params.uid;
-  const pid = req.params.pid;
+  const userID = req.params.pid;
+  const productID = req.params.pid;
   const review = req.body;
   const reviewCreated = await daoAddReview(review);
-  if(userUid === "me"){
-    res.sendStatus(503);
-    return;
-  }
-  try {
-    const productReview = await daoAddProductReview(userUid, pid, reviewCreated._id);
-    res.json(productReview);
-  } catch (e) {
-    console.log(e);
-  }
+  const productReview = await daoAddProductReview(userID, productID, reviewCreated["_id"]);
+  res.json(productReview);
 }
 
 const getReviewsByUser = async (req, res) => {
@@ -40,19 +32,19 @@ const getReviewsByUser = async (req, res) => {
 
 const getWishlistByUser = async (req, res) => {
   const uid = req.params.uid;
-  const wishlist = await wishlistDao.daoGetWishlistForUser(uid);
+  const wishlist = await daoGetWishlistForUser(uid);
   res.json(wishlist);
 }
 
 const getListingByUser = async (req, res) => {
   const uid = req.params.uid;
-  const listing = await productDao.daoGetAllProductsForSeller(uid);
+  const listing = await daoGetAllProductsForSeller(uid);
   res.json(listing);
 }
 
 const getRentalByUser = async (req, res) => {
   const uid = req.params.uid;
-  const rental = await orderDao.findOrdersByUser(uid);
+  const rental = await daoGetAllOrdersForUser(uid);
   res.json(rental);
 }
 
